@@ -6,7 +6,8 @@ import logging
 log = logging.getLogger(__name__)
 
 class P8SMetricsMeter(Meter):
-    metrics = {}
+    def __init__(self):
+        self.metrics = {}
 
     def inc(self, key):
         try:
@@ -42,13 +43,14 @@ class P8sWriter:
                 metrics = []
                 for fieldName, value in meter.get_fields().items():
                     metrics.append(f'{fieldName}={value}')
+
                 if len(metrics) > 0:
                     payload.append(f'{meter.get_measurement_name()},source={self.source} {",".join(metrics)} {nowSeconds}000000000')
 
             body = "\n".join(payload)
             try:
                 if self.debug > 0:
-                    print(f'p8s < {body}')
+                    log.info(f'p8s < {body}')
                 response = requests.post(self.url, 
                          headers = {
                            'Content-Type': 'text/plain',
@@ -60,11 +62,11 @@ class P8sWriter:
                 if response.status_code == 204:
                     self.metrics.inc('p8s.ok')
                     if self.debug > 0:
-                        print(f'p8s < {response.status_code} {response}')
+                        log.info(f'p8s < {response.status_code} {response}')
                 else:
                     self.metrics.inc('p8s.fail')
                     if self.debug > 0:
-                        print(f'p8s < {response.json()}')
+                        log.info(f'p8s < {response.json()}')
             except Exception as err:
                 self.metrics.inc('p8s.exception')
                 traceback.print_exc()

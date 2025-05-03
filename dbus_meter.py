@@ -14,12 +14,6 @@ class Meter:
 
 
 class DbusMeterModel:
-    name: str
-    measurement_name: str
-    servicenamePrefix: str
-    mappings: dict
-    debug: str
-
     def __init__(self, name: str, measurement_name: str, servicenamePrefix: str, mappings:dict, debug: False):
         self.name = name
         self.measurement_name = measurement_name
@@ -28,9 +22,8 @@ class DbusMeterModel:
         self.debug = debug
 
 class DBusMeters:
-    meterConfigs = []
-
     def __init__(self, config:dict):
+        self.meterConfigs = []
         c = config['meters']
         for meter in c:
             self.meterConfigs.append(
@@ -44,6 +37,7 @@ class DBusMeters:
         meters = []
         for meterConfig in self.meterConfigs:
             meters.append(DbusMeter(meterConfig))
+
         return meters
 
 class DbusMeter(Meter):
@@ -52,11 +46,11 @@ class DbusMeter(Meter):
     the paths to collect are defined by mappings.
 
     '''
-    fields = {}
-    mappings = {}
-    tracker = None
     def __init__(self, config: DbusMeterModel):
         self.config = config
+        self.fields = {}
+        self.mappings = {}
+        self.tracker = None
         dbusConn = dbus.SessionBus() if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus()
         dbusNames = dbusConn.list_names()
         for x in dbusNames:
