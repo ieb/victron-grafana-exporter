@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "*** starting grafana_reporter ***"
+exec 2>&1
+cd /data/grafana-exporter
+exec /data/grafana-exporter/grafana_exporter_main.py
