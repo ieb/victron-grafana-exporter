@@ -1,5 +1,10 @@
 # Victron Grafana Cloud Exporter
 
+Although I wrote this and it works, I switched to using Telegraf to export both the OS stats and MQTT data to Grafana cloud. See telegraf/README.md for config and setup
+
+----
+
+
 A module to run on a Victron GX that will export p8s metrics to grafana cloud. 
 
 The module runs as a service, watches 1 or more dbus trees and exports metrics to Grafana cloud
