@@ -1,88 +1,32 @@
 {
-  "meters": [
-    {
-      "name": "vebus",
-      "measurement_name": "vebus",
-      "serviceNamePrefix": "com.victronenergy.vebus",
-      "debug": false,
-      "mappings": {
-        "/Ac/ActiveIn/L1/P": "/Ac/ActiveIn/L1/P",
-        "/Ac/ActiveIn/P": "/Ac/ActiveIn/P",
-        "/Ac/Out/L1/P": "/Ac/Out/L1/P",
-        "/Ac/Out/P": "/Ac/Out/P",
-        "/Bms/AllowToCharge": "/Bms/AllowToCharge",
-        "/Bms/AllowToDischarge": "/Bms/AllowToDischarge",
-        "/Dc/0/Power": "/Dc/0/Power",
-        "/Devices/0/Ac/In/P": "/Devices/0/Ac/In/P",
-        "/Devices/0/Ac/Inverter/P": "/Devices/0/Ac/Inverter/P",
-        "/Devices/0/Ac/Out/P": "/Devices/0/Ac/Out/P",
-        "/Hub4/DisableCharge": "/Hub4/DisableCharge",
-        "/Leds/Absorbtion": "/Leds/Absorbtion",
-        "/Leds/Bulk": "/Leds/Bulk",
-        "/Mode": "/Mode",
-        "/Soc": "/Soc",
-        "/State": "/State",
-        "/VeBusChargeState": "/VeBusChargeState",
-        "/VeBusMainState": "/VeBusMainState"
-      }
-    },
-    {
-      "name": "system",
-      "measurement_name": "system",
-      "serviceNamePrefix": "com.victronenergy.system",
-      "debug": false,
-      "mappings": {
-        "/Ac/Grid/L1/Power": "/Ac/Grid/L1/Power",
-        "/Ac/PvOnGrid/L1/Power": "/Ac/PvOnGrid/L1/Power",
-        "/Dc/Battery/Power": "/Dc/Battery/Power",
-        "/Dc/Battery/Soc": "/Dc/Battery/Soc"
-      }
-    },
-    {
-      "name": "grid",
-      "measurement_name": "grid",
-      "serviceNamePrefix": "com.victronenergy.grid",
-      "debug": false,
-      "mappings": {
-        "/Ac/Energy/Consumption": "/Ac/Energy/Consumption",
-        "/Ac/L1/Power": "/Ac/L1/Power",
-        "/Ac/Power": "/Ac/Power"
-      }
-    },
-    {
-      "name": "battery",
-      "measurement_name": "battery",
-      "serviceNamePrefix": "com.victronenergy.battery",
-      "debug": false,
-      "mappings": {
-        "/Dc/0/Power": "/Dc/0/Power",
-        "/Dc/0/Voltage": "/Dc/0/Voltage",
-        "/Soc": "/Soc"
-      }
-    },
-    {
-      "name": "pvinverter",
-      "measurement_name": "pvinverter",
-      "serviceNamePrefix": "com.victronenergy.pvinverter",
-      "debug": false,
-      "mappings": {
-        "/Ac/Current": "/Ac/Current",
-        "/Ac/Voltage": "/Ac/Voltage",
-        "/Ac/Power": "/Ac/Power",
-        "/Internal/BoostTemp": "/Internal/BoostTemp",
-        "/Internal/DerateMode": "/Internal/DerateMode",
-        "/Internal/IPMTemp": "/Internal/IPMTemp",
-        "/Internal/Pv/0/I": "Internal/Pv/0/I",
-        "/Internal/Pv/0/P": "Internal/Pv/0/P",
-        "/Internal/Pv/0/V": "Internal/Pv/0/V",
-        "/Internal/Pv/1/I": "Internal/Pv/1/I",
-        "/Internal/Pv/1/P": "Internal/Pv/1/P",
-        "/Internal/Pv/1/V": "Internal/Pv/1/V",
-        "/Internal/Pv/0/Energy/Today": "/Internal/Pv/0/Energy/Today", 
-        "/Internal/Pv/1/Energy/Today": "/Internal/Pv/1/Energy/Today", 
-        "/dynamicGenerationMaxPower": "/dynamicGenerationMaxPower",
-        "/dynamicGenerationPower": "/dynamicGenerationPower"
-      }
-    }
-  ]
+        "global": [
+            "!Mgmt/",
+            "!Device",
+            "!Product",
+            "!Model",
+            "!AllowedRoles",
+            "!Role",
+            "!HardwareVersion",
+            "!FirmwareVersion",
+            "!Serial"
+        ],      
+        "com.victronenergy.settings": [
+            "Settings/DynamicGeneration",
+            "!*"
+            ],
+        "com.victronenergy.battery": [
+            "!AvailableBatteryServices",
+            "!AutoSelectedTemperatureService",
+            "!Dc/Battery/TemperatureService"
+            ],
+        "com.victronenergy.system": [
+            "!*"
+            ],
+        "com.victronenergy.vebus": [
+            "!Devices/"
+            ],
+        "com.victronenergy.pvinverter": [
+            ],
+        "com.victronenergy.grid": [
+            ]
 }

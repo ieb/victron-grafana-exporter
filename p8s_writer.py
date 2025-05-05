@@ -1,52 +1,48 @@
 
 import requests
 import time
-from dbus_meter import Meter
 import logging
+import traceback
 log = logging.getLogger(__name__)
 
-class P8SMetricsMeter(Meter):
+class P8SMetricsMeter():
     def __init__(self):
-        self.metrics = {}
+        self.metrics = {
+            'p8s.sent': 0
+        }
 
     def inc(self, key):
         try:
             self.metrics[key] = self.metrics[key]+1
         except:
             self.metrics[key] = 1
-    def get_measurement_name(self) -> str:
-        return "p8s"
-    def get_fields(self) -> dict:
-        return self.metrics
+    def collect(self, source):
+        now = time.time()
+        nowSeconds = int(now)
+        metrics = []
+        for fieldName, value in self.metrics.items():
+            metrics.append(f'{fieldName}={value}')
+        return f've_p8s,source={source} {",".join(metrics)} {nowSeconds}000000000'
+
  
 
 class P8sWriter:
 
-    def __init__(self, source, config: dict,
-            meters : type([Meter]) = []):
+    def __init__(self, source, scanner, config: dict):
+        self.scanner = scanner
         self.source = source
         self.url = config['url']
         self.userId = config['userId']
         self.apiKey = config['apiKey']
-        self.meters = meters
         self.metrics = P8SMetricsMeter()
-        self.meters.append(self.metrics)
         self.debug = False
 
 
     def update(self):
+        log.debug('starting update')
         try:
-            now = time.time()
-            nowSeconds = int(now)
-            payload = []
-            for meter in self.meters:
-                metrics = []
-                for fieldName, value in meter.get_fields().items():
-                    metrics.append(f'{fieldName}={value}')
-
-                if len(metrics) > 0:
-                    payload.append(f'{meter.get_measurement_name()},source={self.source} {",".join(metrics)} {nowSeconds}000000000')
-
+            payload = self.scanner.collect(self.source)
+            payload.append(self.metrics.collect(self.source))
             body = "\n".join(payload)
             try:
                 if self.debug > 0:
@@ -72,5 +68,5 @@ class P8sWriter:
                 traceback.print_exc()
         except:
             traceback.print_exc()            
-            log.errro(f'Update failed')
+            log.error(f'Update failed')
         return True

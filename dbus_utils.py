@@ -32,38 +32,3 @@ def unwrap_dbus_value(val):
         return bool(val)
     return val    
 
-class BusItemTracker(object):
-    '''
-    Watches the dbus for changes to a single value on a service.
-    The value is available at .value, it will be None is no value is present
-    @param bus dbus object, session or system
-    @param serviceName  eg com.victronenergy.system
-    @param path path of the property eg /Ac/L1/Power
-    '''
-    def __init__(self, bus, serviceName : str,  path : str, onchange):
-        self._path = path
-        self._value = None
-        self._onchange = onchange
-        self._values = {}
-        self._match = bus.get_object(serviceName, path, introspect=False).connect_to_signal(
-            "ItemsChanged", self._items_changed_handler)
-        log.info(f' added tracker for  {serviceName} {path}')
-
-
-    def __del__(self):
-        self._match.remove()
-        self._match = None
-    
-    @property
-    def value(self):
-        return self._value
-    
-    def _items_changed_handler(self, items: dict) -> None:
-        if not isinstance(items, dict):
-            return
-        for path, changes in items.items():
-            try:
-                self._values[str(path)] = unwrap_dbus_value(changes['Value'])
-            except KeyError:
-                continue
-        self._onchange(self._values)

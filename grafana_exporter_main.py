@@ -15,7 +15,7 @@ from argparse import ArgumentParser
 from gi.repository import GLib
 
 from p8s_writer import P8sWriter
-from dbus_meter import DbusMeter, DBusMeters
+from dbus_meter import DbusMeter
 
 import logging
 log = logging.getLogger(__name__)
@@ -53,18 +53,12 @@ def main():
 
     with open(args.config) as stream:
         config = json.load(stream)
-    if args.secrets:
-        with open(args.secrets) as stream:
-            secrets = json.load(stream)
-        for k, v in secrets.items():
-            config[k] = v
+    with open(args.secrets) as stream:
+        secrets = json.load(stream)
 
-    metersConfig = DBusMeters(config)
-    meters = metersConfig.create()
-
-
-    writer = P8sWriter('frog', config['p8s'],
-                                meters=meters)
+    meters = DbusMeter(config)
+    writer = P8sWriter('frog', meters,  secrets['p8s'])
+    writer.update()
 
 
     mainloop = GLib.MainLoop()

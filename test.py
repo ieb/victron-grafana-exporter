@@ -12,7 +12,7 @@ VE_INTERFACE = "com.victronenergy.BusItem"
 
 
 
-class DbusMeter:
+class DbusMeterMontor:
     def __init__(self, config):
         self.includeConfig = config
         self.globalIgnore = config['global']
@@ -39,9 +39,9 @@ class DbusMeter:
                 return False
         return True
 
-    def collect(self, source) -> list:
+    def scan(self) -> list:
         dbusNames = self.dbusConn.list_names()
-        payload = []
+        payload = {}
         now = time.time()
         nowSeconds = int(now)
         for x in dbusNames:
@@ -52,7 +52,7 @@ class DbusMeter:
                     includeServiceConfig = v
                     break
             if includeServiceConfig != None:
-                log.debug(f'Processing {x}')
+                print(f'Processing {x}')
                 values = self.dbusConn.call_blocking(serviceName, '/', VE_INTERFACE, 'GetValue', '', [])
                 metrics = []
                 for k,v in values.items():
@@ -63,9 +63,7 @@ class DbusMeter:
                         else:
                             log.debug(f' reject type {value}')
                 log.debug("\n".join(metrics))
-                if len(metrics) > 0:
-                    metricName = serviceName.replace('com.victronenergy.','ve_')
-                    payload.append(f'{metricName},source={source} {",".join(metrics)} {nowSeconds}000000000')
+                payload[serviceName] = f'{serviceName},source=test {",".join(metrics)} {nowSeconds}000000000'
         return payload;
 
 
@@ -106,8 +104,10 @@ if __name__ == '__main__':
     }
 
     dbusMon = DbusMeterMontor(includeConfig)
-    payload = dbusMon.collect('test')
-    body = "\n".join(payload)
-    total = len(body)
-    print(body)
+    payload = dbusMon.scan()
+    total = 0
+    for k,v in payload.items():
+        total = total + len(v)
+        print(f'{k} {len(v)} {v}')
+
     print(f'total {total}')
