@@ -13,9 +13,11 @@ import json
 
 from argparse import ArgumentParser
 from gi.repository import GLib
+from watchdog import Watchdog
 
 from p8s_writer import P8sWriter
 from dbus_meter import DbusMeter
+from os_meter import OsMeter
 
 import logging
 log = logging.getLogger(__name__)
@@ -56,8 +58,14 @@ def main():
     with open(args.secrets) as stream:
         secrets = json.load(stream)
 
-    meters = DbusMeter(config)
-    writer = P8sWriter('frog', meters,  secrets['p8s'])
+    # protect against a Glib Main loop failure
+    writerWatchdog = Watchdog(120)
+    writerWatchdog.start()
+    collectors = []
+
+    collectors.append(DbusMeter(config))
+    collectors.append(OsMeter())
+    writer = P8sWriter('frog', collectors,  writerWatchdog, secrets['p8s'])
     writer.update()
 
 

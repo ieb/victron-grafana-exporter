@@ -1,8 +1,12 @@
 # Telegraf to Grafana CLoud
 
+This is no longer used, replaced by a python exporter see os_meter.py. Memory use and load is back to acceptable levels.
+
 As an alternative to dbus -> driver -> p8s using custom code this is config using Telgraf to Grafana Cloud over in the influxd route, which can collect from OS level plugins and MQTT.
 
 The downside of Telegraf is it uses a whopping 130MB of RSS (774MB VSZ) which bumps a Multiplus Memory usage to 60% from more like 45%... and its not doing a lot. Compared to the other processes on a VenusOS install, it sticks out like a very sore thumb.
+
+
 
 
 # Install
